@@ -17,8 +17,8 @@ public class GGExecutor extends BaseExecutor {
         			GG.conf.set("settings.arena.lobbylocationy", y);
         			GG.conf.set("settings.arena.lobbylocationz", z);
         			GG.game.setLobyLocationX(x);
-        			GG.game.setLobyLocationX(y);
-        			GG.game.setLobyLocationX(z);
+        			GG.game.setLobyLocationY(y);
+        			GG.game.setLobyLocationZ(z);
         			GG.plugin.saveConfig();
                 	player.sendMessage(ChatColor.AQUA+"[GG]: Lobby now set at current location.");
         		}else if(s.equalsIgnoreCase("endgame")) {
