@@ -61,7 +61,7 @@ public class GGGame{
         setGuardians(new HashMap<String, Integer>());
         setCooldowns(new HashMap<String, Long>());
         setPlayers(new ArrayList<String>());
-        thread = new GGGameThread(GuardletGuardians.plugin, this);
+        thread = new GGGameThread(GG.plugin, this);
         setEnded(false);
         thread.start();
     }
@@ -188,7 +188,18 @@ public class GGGame{
     public void removePlayer(String s) {
     	players.remove(s);
     }
-    
+    public void removeGuardian(Player p) {
+    	removeGuardian(p.getName());
+    }
+    public void removeGuardian(String s) {
+    	guardians.remove(s);
+    }
+    public void removeRunner(Player p) {
+    	removeRunner(p.getName());
+    }
+    public void removeRunner(String s) {
+    	runners.remove(s);
+    }
     public void addGspawn(Location loc) {
     	gspawns.put(makeString(loc), 0);
     }
@@ -204,7 +215,7 @@ public class GGGame{
 	public static Location makeLocation(String s) {
 		String[] loc = s.split("&&");
 		
-		return new Location(GuardletGuardians.plugin.getServer().getWorld(loc[0]), Integer.parseInt(loc[1]), Integer.parseInt(loc[2]), Integer.parseInt(loc[3])); 
+		return new Location(GG.plugin.getServer().getWorld(loc[0]), Integer.parseInt(loc[1]), Integer.parseInt(loc[2]), Integer.parseInt(loc[3])); 
 	}
     
     public ArrayList<String> getPlayers(){

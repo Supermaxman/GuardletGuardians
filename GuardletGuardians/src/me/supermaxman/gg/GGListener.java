@@ -35,15 +35,15 @@ public class GGListener implements Listener {
 	@EventHandler
 	public void onPlayerRespawn(PlayerRespawnEvent e) {
 		Player p = e.getPlayer();
-		e.setRespawnLocation(new Location(p.getWorld(), GuardletGuardians.game.getLobyLocationX(), GuardletGuardians.game.getLobyLocationY(), GuardletGuardians.game.getLobyLocationZ()));
+		e.setRespawnLocation(new Location(p.getWorld(), GG.game.getLobyLocationX(), GG.game.getLobyLocationY(), GG.game.getLobyLocationZ()));
 	}
 	
 	@SuppressWarnings("deprecation")
 	@EventHandler
 	public void onBlockBreak(BlockBreakEvent e) {
 		if(e.getPlayer().isOp()) {
-			if(e.getBlock().getTypeId() == GuardletGuardians.game.getGuardianId()) {
-				GuardletGuardians.game.removeGspawn(e.getBlock().getRelative(BlockFace.UP).getLocation());
+			if(e.getBlock().getTypeId() == GG.game.getGuardianId()) {
+				GG.game.removeGspawn(e.getBlock().getRelative(BlockFace.UP).getLocation());
 				e.getPlayer().sendMessage(ChatColor.AQUA+"[GG]: New Guardian Spawn removed.");
 			}
 		}else {
@@ -55,8 +55,8 @@ public class GGListener implements Listener {
 	@EventHandler
 	public void onBlockPlace(BlockPlaceEvent e) {
 		if(e.getPlayer().isOp()) {
-			if(e.getBlock().getTypeId() == GuardletGuardians.game.getGuardianId()) {
-				GuardletGuardians.game.addGspawn(e.getBlock().getRelative(BlockFace.UP).getLocation());
+			if(e.getBlock().getTypeId() == GG.game.getGuardianId()) {
+				GG.game.addGspawn(e.getBlock().getRelative(BlockFace.UP).getLocation());
 				e.getPlayer().sendMessage(ChatColor.AQUA+"[GG]: New Guardian Spawn added.");
 			}
 		}else {
@@ -68,28 +68,28 @@ public class GGListener implements Listener {
 	public void onPlayerMove(PlayerMoveEvent e) {
 		//Stop Guardian movement
 		Player p = e.getPlayer();
-		if(GuardletGuardians.game.isRunner(p)) {
+		if(GG.game.isRunner(p)) {
 			Block b = p.getLocation().getBlock().getRelative(BlockFace.DOWN);
-			if(b.getTypeId()==GuardletGuardians.game.getFinishId1() && (GuardletGuardians.game.getLaps(p) % 2==0)) {
-				GuardletGuardians.game.addLap(p);
-				if(GuardletGuardians.game.getLaps(p)<GuardletGuardians.game.getFinishLaps()) {
-					if(GuardletGuardians.game.getLaps(p) == GuardletGuardians.game.getFinishLaps()-1) {
+			if(b.getTypeId()==GG.game.getFinishId1() && (GG.game.getLaps(p) % 2==0)) {
+				GG.game.addLap(p);
+				if(GG.game.getLaps(p)<GG.game.getFinishLaps()) {
+					if(GG.game.getLaps(p) == GG.game.getFinishLaps()-1) {
 				        p.getServer().broadcastMessage(ChatColor.AQUA+"[GG]: "+ChatColor.GOLD+p.getName()+ChatColor.AQUA+" is on his "+ChatColor.GOLD+"final "+ChatColor.AQUA+"lap!");
 					}else {
-				        p.getServer().broadcastMessage(ChatColor.AQUA+"[GG]: "+ChatColor.GOLD+p.getName()+ChatColor.AQUA+" is on lap "+ChatColor.GOLD+(GuardletGuardians.game.getLaps(p)+1)+ChatColor.AQUA+"!");
+				        p.getServer().broadcastMessage(ChatColor.AQUA+"[GG]: "+ChatColor.GOLD+p.getName()+ChatColor.AQUA+" is on lap "+ChatColor.GOLD+(GG.game.getLaps(p)+1)+ChatColor.AQUA+"!");
 					}
 				}
-			}else if(b.getTypeId()==GuardletGuardians.game.getFinishId2() && (GuardletGuardians.game.getLaps(p) % 2!=0)) {
-				GuardletGuardians.game.addLap(p);
-				if(GuardletGuardians.game.getLaps(p)<GuardletGuardians.game.getFinishLaps()) {
-					if(GuardletGuardians.game.getLaps(p) == GuardletGuardians.game.getFinishLaps()-1) {
+			}else if(b.getTypeId()==GG.game.getFinishId2() && (GG.game.getLaps(p) % 2!=0)) {
+				GG.game.addLap(p);
+				if(GG.game.getLaps(p)<GG.game.getFinishLaps()) {
+					if(GG.game.getLaps(p) == GG.game.getFinishLaps()-1) {
 				        p.getServer().broadcastMessage(ChatColor.AQUA+"[GG]: "+ChatColor.GOLD+p.getName()+ChatColor.AQUA+" is on his "+ChatColor.GOLD+"final "+ChatColor.AQUA+"lap!");
 					}else {
-				        p.getServer().broadcastMessage(ChatColor.AQUA+"[GG]: "+ChatColor.GOLD+p.getName()+ChatColor.AQUA+" is on lap "+ChatColor.GOLD+(GuardletGuardians.game.getLaps(p)+1)+ChatColor.AQUA+"!");
+				        p.getServer().broadcastMessage(ChatColor.AQUA+"[GG]: "+ChatColor.GOLD+p.getName()+ChatColor.AQUA+" is on lap "+ChatColor.GOLD+(GG.game.getLaps(p)+1)+ChatColor.AQUA+"!");
 					}
 				}
 			}
-		}else if(GuardletGuardians.game.isGuardian(p)) {
+		}else if(GG.game.isGuardian(p)) {
 			Location loc = e.getFrom().setDirection(e.getTo().getDirection());
 			e.setTo(loc);
 		}
@@ -102,11 +102,11 @@ public class GGListener implements Listener {
 			if (e.getClickedBlock().getState() instanceof Sign) {
 				Sign sign = (Sign) e.getClickedBlock().getState();
 				if(sign.getLine(0).equalsIgnoreCase("GG")&&sign.getLine(1).equalsIgnoreCase("join")) {
-					if(GuardletGuardians.game.isEnded()) {
-						if(GuardletGuardians.game.getPlayers().size()<GuardletGuardians.game.getMaxPlayers()) {
-							if(!GuardletGuardians.game.isPlayer(e.getPlayer())) {
-								GuardletGuardians.game.addPlayer(e.getPlayer());
-					            int i = GuardletGuardians.game.getMinPlayers()-GuardletGuardians.game.getPlayers().size();
+					if(GG.game.isEnded()) {
+						if(GG.game.getPlayers().size()<GG.game.getMaxPlayers()) {
+							if(!GG.game.isPlayer(e.getPlayer())) {
+								GG.game.addPlayer(e.getPlayer());
+					            int i = GG.game.getMinPlayers()-GG.game.getPlayers().size();
 								e.getPlayer().sendMessage(ChatColor.AQUA+"[GG]: Joined game, needs "+ChatColor.GOLD+i+ChatColor.AQUA+" more players!");
 							}else {
 								e.getPlayer().sendMessage(ChatColor.RED+"[GG]: You have already joined!");
@@ -127,26 +127,26 @@ public class GGListener implements Listener {
 				if(i.hasItemMeta()) {
 					if(i.getItemMeta().hasDisplayName()) {
 						if(i.getItemMeta().getDisplayName().equals(ChatColor.YELLOW + "" + ChatColor.BOLD + "Sprint")) {
-							if(GuardletGuardians.game.isCooldown(p)) {
-								if(GuardletGuardians.game.getCooldown(p)+(GuardletGuardians.game.getSugarTime()*1000) < System.currentTimeMillis()) {
-									GuardletGuardians.game.addCooldown(p);
-									p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, GuardletGuardians.game.getSugarTime()*20, 1, true));
+							if(GG.game.isCooldown(p)) {
+								if(GG.game.getCooldown(p)+(GG.game.getSugarTime()*1000) < System.currentTimeMillis()) {
+									GG.game.addCooldown(p);
+									p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, GG.game.getSugarTime()*20, 1, true));
 									e.getPlayer().sendMessage(ChatColor.AQUA+"[GG]: Sprinting!");
 								}else {
 									e.getPlayer().sendMessage(ChatColor.RED+"[GG]: Sprint is on cooldown!");
 								}
 							}else {
-								GuardletGuardians.game.addCooldown(p);
-								p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, GuardletGuardians.game.getSugarTime()*20, 1, true));
+								GG.game.addCooldown(p);
+								p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, GG.game.getSugarTime()*20, 1, true));
 								e.getPlayer().sendMessage(ChatColor.AQUA+"[GG]: Sprinting!");
 							}							
 						}
 					}
 				}
 				if(i.getType()==Material.SNOW_BALL) {
-					if(GuardletGuardians.game.isCooldown(p)) {
-						if(GuardletGuardians.game.getCooldown(p)+(GuardletGuardians.game.getSnowballTime()*1000) < System.currentTimeMillis()) {
-							GuardletGuardians.game.addCooldown(p);
+					if(GG.game.isCooldown(p)) {
+						if(GG.game.getCooldown(p)+(GG.game.getSnowballTime()*1000) < System.currentTimeMillis()) {
+							GG.game.addCooldown(p);
 							i.setAmount(i.getAmount()+1);
 							p.updateInventory();
 						}else {
@@ -154,7 +154,7 @@ public class GGListener implements Listener {
 							e.setCancelled(true);
 						}
 					}else {
-						GuardletGuardians.game.addCooldown(p);
+						GG.game.addCooldown(p);
 						i.setAmount(i.getAmount()+1);
 						p.updateInventory();
 					}
@@ -179,16 +179,26 @@ public class GGListener implements Listener {
 	@EventHandler
 	public void onPlayerquit(PlayerQuitEvent e) {
 		Player p = e.getPlayer();
-		if (GuardletGuardians.game.isPlayer(p)) {
-			GuardletGuardians.game.removePlayer(p);
-			//add more stuff here for removing player in game
+		if (GG.game.isPlayer(p)) {
+			GG.game.removePlayer(p);
+			if(GG.game.isRunner(p)) {
+				GG.game.removeRunner(p);
+				if(GG.game.getRunners().size()==0) {
+					GG.game.getThread().endGame();
+				}
+			}else if(GG.game.isGuardian(p)) {
+				GG.game.removeGuardian(p);
+				if(GG.game.getGuardians().size()==0) {
+					GG.game.getThread().endGame();
+				}
+			}
 		}
 	}
 	
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent e) {
 		Player p = e.getPlayer();
-    	p.teleport(new Location(p.getWorld(), GuardletGuardians.game.getLobyLocationX(), GuardletGuardians.game.getLobyLocationY(), GuardletGuardians.game.getLobyLocationZ()));
+    	p.teleport(new Location(p.getWorld(), GG.game.getLobyLocationX(), GG.game.getLobyLocationY(), GG.game.getLobyLocationZ()));
     	p.getInventory().clear();
     	ItemStack[] is = new ItemStack[4];
     	p.getInventory().setArmorContents(is);
@@ -210,17 +220,17 @@ public class GGListener implements Listener {
 				if(e.getCause().equals(DamageCause.PROJECTILE)) {
 					Player p = (Player) e.getEntity();
 					Snowball b = (Snowball) ((EntityDamageByEntityEvent) e).getDamager();
-					GuardletGuardians.game.addHit(p);
+					GG.game.addHit(p);
 					if(b.getShooter() !=null) {
 						if(b.getShooter() instanceof Player) {
 							Player d = (Player) b.getShooter();
-							GuardletGuardians.game.addHit(d);
-					        d.sendMessage(ChatColor.AQUA+"[GG]: You hit "+ChatColor.GOLD+p.getName()+ ChatColor.AQUA+"! He has "+ChatColor.GOLD+(GuardletGuardians.game.getMaxHits()-GuardletGuardians.game.getHits(p))+ ChatColor.AQUA+" more left until he is out!");
+							GG.game.addHit(d);
+					        d.sendMessage(ChatColor.AQUA+"[GG]: You hit "+ChatColor.GOLD+p.getName()+ ChatColor.AQUA+"! He has "+ChatColor.GOLD+(GG.game.getMaxHits()-GG.game.getHits(p))+ ChatColor.AQUA+" more left until he is out!");
 						}
 					}
-					p.sendMessage(ChatColor.AQUA+"[GG]: You have been hit by the Guardians! "+ChatColor.GOLD+(GuardletGuardians.game.getMaxHits()-GuardletGuardians.game.getHits(p))+ ChatColor.AQUA+" more and you are out!");
-					if(GuardletGuardians.game.getHits(p) >= GuardletGuardians.game.getMaxHits()) {
-						GuardletGuardians.game.addGuardian(p);
+					p.sendMessage(ChatColor.AQUA+"[GG]: You have been hit by the Guardians! "+ChatColor.GOLD+(GG.game.getMaxHits()-GG.game.getHits(p))+ ChatColor.AQUA+" more and you are out!");
+					if(GG.game.getHits(p) >= GG.game.getMaxHits()) {
+						GG.game.addGuardian(p);
 					}
 				}else {
 					e.setCancelled(true);

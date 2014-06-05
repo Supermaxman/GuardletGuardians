@@ -6,8 +6,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 abstract class BaseExecutor implements CommandExecutor {
-	protected static GuardletGuardians pl;
-    BaseExecutor(GuardletGuardians pl) {
+	protected static GG pl;
+    BaseExecutor(GG pl) {
         BaseExecutor.pl = pl;
     }
 

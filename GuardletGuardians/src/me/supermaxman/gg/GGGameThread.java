@@ -13,11 +13,11 @@ import org.bukkit.potion.PotionEffect;
 public class GGGameThread extends Thread {
 
 private final GGGame game;
-private final GuardletGuardians plugin;
+private final GG plugin;
 public boolean end;
 
-public GGGameThread(GuardletGuardians pl, GGGame g){
-    setName("GuardletGuardians-Thread-"+getId());
+public GGGameThread(GG pl, GGGame g){
+    setName("GG-Thread-"+getId());
     game = g;
     plugin = pl;
     end = false;
@@ -78,7 +78,7 @@ public GGGameThread(GuardletGuardians pl, GGGame g){
         
         endGame();
 		} catch (InterruptedException e) {
-			GuardletGuardians.log.warning("[" + plugin.getName() + "] Game interupted by server.");
+			GG.log.warning("[" + plugin.getName() + "] Game interupted by server.");
 		}
     	
         this.interrupt();   
@@ -110,7 +110,7 @@ public GGGameThread(GuardletGuardians pl, GGGame g){
             }
         	p.teleport(new Location(p.getWorld(), game.getLobyLocationX(), game.getLobyLocationY(), game.getLobyLocationZ()));
         }
-        GuardletGuardians.startGame();
+        GG.startGame();
         this.interrupt();   
 	}
 	synchronized void startGame() {
@@ -140,7 +140,7 @@ public GGGameThread(GuardletGuardians pl, GGGame g){
 	@SuppressWarnings("deprecation")
 	synchronized void equipRunners() {
 		for(String s : game.getPlayers()) {
-			Player p = GuardletGuardians.plugin.getServer().getPlayer(s);
+			Player p = GG.plugin.getServer().getPlayer(s);
 			
 			if(p!=null) {				
 				if(game.isRunner(p)){
