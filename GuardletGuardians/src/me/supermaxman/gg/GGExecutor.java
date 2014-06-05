@@ -127,10 +127,10 @@ public class GGExecutor extends BaseExecutor {
                     	player.sendMessage(ChatColor.RED+"[GG]: Command used incorrectly, please only set numbers for limits.");
         			}
         		}else {
-                	player.sendMessage(ChatColor.RED+"[GG]: Command used incorrectly, use /hvd setlobby,runnerpoint,endgame,starttime [time],timelimit [time],appletimer [time], minplayers [limit],maxplayers [limit].");
+                	player.sendMessage(ChatColor.RED+"[GG]: Command used incorrectly, use /gg setlobby, runnerpoint, endgame, starttime [time], finishlaps [lap number], sugartimer [time], snowballtime [time], minplayers [limit], maxplayers [limit], finishid1 [block id], finishid2 [block id], guardianid [block id], .");
         		}
         	}else {
-            	player.sendMessage(ChatColor.RED+"[GG]: Command used incorrectly, use /hvd setlobby,setgame,setapple,endgame,starttime [time],timelimit [time],appletimer [time], minplayers [limit],maxplayers [limit].");
+            	player.sendMessage(ChatColor.RED+"[GG]: Command used incorrectly, use /gg setlobby,setgame,setapple,endgame,starttime [time],timelimit [time],appletimer [time], minplayers [limit],maxplayers [limit].");
         	}
         }else {
         	player.sendMessage(ChatColor.RED+"[GG]: You do not have permission to use this command.");
