@@ -268,7 +268,7 @@ public class GGGame{
     }
     
 	public String chooseGuardian() {
-		if(getFirstGuardian()==null) {
+		if(guardians.size()==0) {
 			Random r = new Random();
 			int i = r.nextInt(players.size());
 			return players.get(i);
