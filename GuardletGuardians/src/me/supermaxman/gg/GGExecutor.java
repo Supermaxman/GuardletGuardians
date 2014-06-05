@@ -135,10 +135,10 @@ public class GGExecutor extends BaseExecutor {
                     	player.sendMessage(ChatColor.RED+"[GG]: Could not find player.");
         			}
         		}else {
-                	player.sendMessage(ChatColor.RED+"[GG]: Command used incorrectly, use /gg setlobby, runnerpoint, endgame, starttime [time], finishlaps [lap number], sugartimer [time], snowballtime [time], minplayers [limit], maxplayers [limit], finishid1 [block id], finishid2 [block id], guardianid [block id], guardian [username]");
+                	player.sendMessage(ChatColor.RED+"[GG]: Command used incorrectly, use /gg setlobby, runnerpoint, endgame, starttime [time], finishlaps [lap number], sugartime [time], snowballtime [time], minplayers [limit], maxplayers [limit], finishid1 [block id], finishid2 [block id], guardianid [block id], guardian [username]");
         		}
         	}else {
-            	player.sendMessage(ChatColor.RED+"[GG]: Command used incorrectly, use /gg setlobby, runnerpoint, endgame, starttime [time], finishlaps [lap number], sugartimer [time], snowballtime [time], minplayers [limit], maxplayers [limit], finishid1 [block id], finishid2 [block id], guardianid [block id], guardian [username]");
+            	player.sendMessage(ChatColor.RED+"[GG]: Command used incorrectly, use /gg setlobby, runnerpoint, endgame, starttime [time], finishlaps [lap number], sugartime [time], snowballtime [time], minplayers [limit], maxplayers [limit], finishid1 [block id], finishid2 [block id], guardianid [block id], guardian [username]");
         	}
         }else {
         	player.sendMessage(ChatColor.RED+"[GG]: You do not have permission to use this command.");
