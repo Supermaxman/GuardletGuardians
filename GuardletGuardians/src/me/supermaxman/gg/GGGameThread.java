@@ -31,27 +31,27 @@ public GGGameThread(GuardletGuardians pl, GGGame g){
     	if(end)this.interrupt();
         while(game.getPlayers().size()<game.getMinPlayers()) {
             int i = game.getMinPlayers()-game.getPlayers().size();
-            plugin.getServer().broadcastMessage(ChatColor.AQUA+"[GuardletGuardians]: Game requires " +ChatColor.GOLD+i+ChatColor.AQUA+" more players to begin!");
+            plugin.getServer().broadcastMessage(ChatColor.AQUA+"[GG]: Game requires " +ChatColor.GOLD+i+ChatColor.AQUA+" more players to begin!");
             this.wait(10*1000);
         	if(end)this.interrupt();
         }
-        plugin.getServer().broadcastMessage(ChatColor.AQUA+"[GuardletGuardians]: Game beginning in " +ChatColor.GOLD+start+ChatColor.AQUA+" seconds!");
+        plugin.getServer().broadcastMessage(ChatColor.AQUA+"[GG]: Game beginning in " +ChatColor.GOLD+start+ChatColor.AQUA+" seconds!");
      	start = start/2;
         this.wait(start*1000);
     	if(end)this.interrupt();
-        plugin.getServer().broadcastMessage(ChatColor.AQUA+"[GuardletGuardians]: Game beginning in " +ChatColor.GOLD+start+ChatColor.AQUA+" seconds!");
+        plugin.getServer().broadcastMessage(ChatColor.AQUA+"[GG]: Game beginning in " +ChatColor.GOLD+start+ChatColor.AQUA+" seconds!");
      	start = start/2;
      	this.wait(start*1000);
     	if(end)this.interrupt();
-        plugin.getServer().broadcastMessage(ChatColor.AQUA+"[GuardletGuardians]: Game beginning in " +ChatColor.GOLD+start+ChatColor.AQUA+" seconds!");
+        plugin.getServer().broadcastMessage(ChatColor.AQUA+"[GG]: Game beginning in " +ChatColor.GOLD+start+ChatColor.AQUA+" seconds!");
      	this.wait(start*1000);
     	if(end)this.interrupt();
-        plugin.getServer().broadcastMessage(ChatColor.AQUA+"[GuardletGuardians]: "+ChatColor.GOLD+"Game Start"+ChatColor.AQUA+"!");
+        plugin.getServer().broadcastMessage(ChatColor.AQUA+"[GG]: "+ChatColor.GOLD+"Game Start"+ChatColor.AQUA+"!");
         
         game.addGuardian(game.chooseGuardian());
         game.addRunners();
         startGame();
-        plugin.getServer().broadcastMessage(ChatColor.AQUA+"[GuardletGuardians]: " +ChatColor.RED+game.getFirstGuardian()+ChatColor.AQUA+" is the first Guardian! Start running!");
+        plugin.getServer().broadcastMessage(ChatColor.AQUA+"[GG]: " +ChatColor.RED+game.getFirstGuardian()+ChatColor.AQUA+" is the first Guardian! Start running!");
     	if(end)this.interrupt();
         game.setEnded(false);
         equipRunners();
@@ -60,15 +60,9 @@ public GGGameThread(GuardletGuardians pl, GGGame g){
         //start
         
      	while(!game.isEnded()) {
-         	this.wait(1000);
+         	this.wait(100);
         	if(end)this.interrupt();
-            for(String s : game.getGuardians().keySet()) {
-            	System.out.println("Guardian " + s +": Hits-"+ game.getHits(s));
-            	System.out.println();
-            }
-            
             for(String s : game.getRunners().keySet()) {
-            	System.out.println("Runner " + s +": Laps-"+ game.getLaps(s)+" Hits-"+ game.getHits(s));
             	if(game.getLaps(s)>=game.getFinishLaps()) {
             		loseGame(s);
             		return;
@@ -91,8 +85,18 @@ public GGGameThread(GuardletGuardians pl, GGGame g){
     } 
     
 	synchronized void winGame() {
-        plugin.getServer().broadcastMessage(ChatColor.AQUA+"[GuardletGuardians]: "+ChatColor.GOLD+"Game End"+ChatColor.AQUA+"!");
-        plugin.getServer().broadcastMessage(ChatColor.AQUA+"[GuardletGuardians]: "+ChatColor.GOLD+"Guardians"+ChatColor.AQUA+" have won!");
+        plugin.getServer().broadcastMessage(ChatColor.AQUA+"[GG]: "+ChatColor.GOLD+"Game End"+ChatColor.AQUA+"!");
+        plugin.getServer().broadcastMessage(ChatColor.AQUA+"[GG]: "+ChatColor.GOLD+"Guardians"+ChatColor.AQUA+" have won!");
+        int i = 0;
+        String winner = "";
+        for(String s : game.getGuardians().keySet()) {
+        	if(game.getHits(s)>i) {
+        		i = game.getHits(s);
+        		winner = s;
+        	}
+        }
+        plugin.getServer().broadcastMessage(ChatColor.AQUA+"[GG]: "+ChatColor.GOLD+winner+ChatColor.AQUA+" took out the most runners with "+ChatColor.GOLD+game.getHits(winner)+ChatColor.AQUA+" hits!");
+
         endGame();
 	}
 	synchronized void endGame() {
@@ -119,8 +123,9 @@ public GGGameThread(GuardletGuardians pl, GGGame g){
         }
 	}
 	synchronized void loseGame(String p) {
-        plugin.getServer().broadcastMessage(ChatColor.AQUA+"[GuardletGuardians]: "+ChatColor.GOLD+"Game End"+ChatColor.AQUA+"!");
-        plugin.getServer().broadcastMessage(ChatColor.AQUA+"[GuardletGuardians]: Runner "+ChatColor.GOLD+p+ChatColor.AQUA+" has won!");
+        plugin.getServer().broadcastMessage(ChatColor.AQUA+"[GG]: "+ChatColor.GOLD+"Game End"+ChatColor.AQUA+"!");
+        plugin.getServer().broadcastMessage(ChatColor.AQUA+"[GG]: "+ChatColor.GOLD+"Runners"+ChatColor.AQUA+" have won!");
+        plugin.getServer().broadcastMessage(ChatColor.AQUA+"[GG]: "+ChatColor.GOLD+p+ChatColor.AQUA+" finished first!");
         endGame();
 	}
 	@SuppressWarnings("deprecation")
