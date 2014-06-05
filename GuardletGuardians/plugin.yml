@@ -1,0 +1,9 @@
+name: GuardletGuardians
+main: me.supermaxman.gg.GuardletGuardians
+version: 1.0.0
+author: Supermaxman
+description: Guardlet Guardians
+commands:
+    gg:
+        description: Op commands
+        usage: /<command>

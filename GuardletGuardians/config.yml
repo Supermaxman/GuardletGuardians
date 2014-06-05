@@ -1,0 +1,21 @@
+#
+# Notes:
+# 
+settings:
+  arena: 
+    minplayers: '3'
+    maxplayers: '6'
+    lobbylocationx: '0'
+    lobbylocationy: '100'
+    lobbylocationz: '0'
+    starttime: '15'
+    finishlaps: '20'
+    gamelocationx: '0'
+    gamelocationy: '100'
+    gamelocationz: '0'
+    finishid1: '41'
+    finishid2: '57'
+    guardianid: '48'
+    sugartime: '10'
+    snowballtime: '3'
+    maxhits: '2'
