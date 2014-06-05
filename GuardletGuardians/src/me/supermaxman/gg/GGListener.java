@@ -133,7 +133,7 @@ public class GGListener implements Listener {
 									p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, GG.game.getSugarTime()*20, 1, true));
 									e.getPlayer().sendMessage(ChatColor.AQUA+"[GG]: Sprinting!");
 								}else {
-									e.getPlayer().sendMessage(ChatColor.RED+"[GG]: Sprint is on cooldown!");
+									e.getPlayer().sendMessage(ChatColor.RED+"[GG]: Sprinting is on cooldown for "+ChatColor.GOLD+((GG.game.getCooldown(p)+(GG.game.getSugarTime()*1000) - System.currentTimeMillis())/1000)+ ChatColor.RED+" more second(s)!");
 								}
 							}else {
 								GG.game.addCooldown(p);
@@ -147,17 +147,15 @@ public class GGListener implements Listener {
 					if(GG.game.isCooldown(p)) {
 						if(GG.game.getCooldown(p)+(GG.game.getSnowballTime()*1000) < System.currentTimeMillis()) {
 							GG.game.addCooldown(p);
-							i.setAmount(i.getAmount()+1);
-							p.updateInventory();
+							p.launchProjectile(Snowball.class).setShooter(p);
 						}else {
-							e.getPlayer().sendMessage(ChatColor.RED+"[GG]: Snowball is on cooldown!");
-							e.setCancelled(true);
+							e.getPlayer().sendMessage(ChatColor.RED+"[GG]: Snowball is on cooldown for "+ChatColor.GOLD+((GG.game.getCooldown(p)+(GG.game.getSnowballTime()*1000) - System.currentTimeMillis())/1000)+ ChatColor.RED+" more second(s)!");
 						}
 					}else {
 						GG.game.addCooldown(p);
-						i.setAmount(i.getAmount()+1);
-						p.updateInventory();
+						p.launchProjectile(Snowball.class).setShooter(p);
 					}
+					e.setCancelled(true);
 				}
 			}
 		}

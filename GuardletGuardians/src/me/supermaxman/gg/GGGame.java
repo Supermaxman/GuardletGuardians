@@ -39,8 +39,7 @@ public class GGGame{
 	private HashMap<String, Integer> gspawns = new HashMap<String, Integer>();
 	
     public GGGame(int min, int max, int x, int y, int z, int start, int laps, int x2, int y2, int z2, int id1, int id2, int id3, int stime, int btime, int maxhits) {
-    	resetGspawns();
-        setMinPlayers(min);
+    	setMinPlayers(min);
         setMaxPlayers(max);
         setLobyLocationX(x);
         setLobyLocationY(y);
@@ -208,7 +207,7 @@ public class GGGame{
     	gspawns.remove(makeString(loc));
     }
     
-	public static String makeString(Location loc) {
+	public String makeString(Location loc) {
 		return loc.getWorld().getName() + "&&" + loc.getBlockX() + "&&" + loc.getBlockY() + "&&" + loc.getBlockZ(); 
 	}
 	
@@ -269,19 +268,25 @@ public class GGGame{
     }
     
 	public String chooseGuardian() {
-		Random r = new Random();
-		int i = r.nextInt(players.size());
-		return players.get(i);
+		if(getFirstGuardian()==null) {
+			Random r = new Random();
+			int i = r.nextInt(players.size());
+			return players.get(i);
+		}else {
+			return getFirstGuardian();
+		}
 	}
 	
 	public void setupGuardian(Player p) {
 		Random r = new Random();
 		ArrayList<Location> spawns = new ArrayList<Location>();
+		
 		for(String s : gspawns.keySet()) {
 			if(gspawns.get(s)==0) {
 				spawns.add(makeLocation(s));
 			}
 		}
+    	
 		int i = r.nextInt(spawns.size());
 		Location loc = spawns.get(i);
 		gspawns.put(makeString(loc), 1);

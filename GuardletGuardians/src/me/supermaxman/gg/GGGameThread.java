@@ -27,6 +27,7 @@ public GGGameThread(GG pl, GGGame g){
     	if(end)this.interrupt();
 		game.setEnded(true);
         int start = game.getStartTime();
+		game.resetGspawns();
         this.wait(5000);
     	if(end)this.interrupt();
         while(game.getPlayers().size()<game.getMinPlayers()) {
@@ -79,6 +80,7 @@ public GGGameThread(GG pl, GGGame g){
         endGame();
 		} catch (InterruptedException e) {
 			GG.log.warning("[" + plugin.getName() + "] Game interupted by server.");
+			GG.saveLocations();
 		}
     	
         this.interrupt();   
@@ -101,6 +103,8 @@ public GGGameThread(GG pl, GGGame g){
 	}
 	synchronized void endGame() {
 		game.setEnded(true);
+		game.resetGspawns();
+		GG.saveLocations();
         for(Player p : plugin.getServer().getOnlinePlayers()) {
         	p.getInventory().clear();
         	ItemStack[] is = new ItemStack[4];

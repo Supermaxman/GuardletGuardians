@@ -63,6 +63,7 @@ public class GG extends JavaPlugin {
 			
 			game = new GGGame(min, max, x, y, z, start, laps, x2, y2, z2, id1, id2, id3, sugar, ball, maxhits);
 			loadFiles();
+			game.resetGspawns();
 			
 		} catch (Exception e) {
 			log.warning("[" + plugin.getName() + "] Settings are invalid in config.yml! Could not load the values.");
@@ -83,18 +84,20 @@ public class GG extends JavaPlugin {
 	}
 	
 	public void onDisable() {
-		try {
-			ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(getDataFolder() + File.separator + "gspawns.ser"));
-			oos.writeObject(game.getGspawns());
-			oos.close();
-		} catch (Exception e) {
-			log.warning("[" + getName() + "] Files could not be saved!");
-			e.printStackTrace();
-		}
 		
 		game.getThread().end = true;
 		saveConfig();
 		log.info(getName() + " has been disabled.");
+	}
+	public static void saveLocations() {
+		try {
+			ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(plugin.getDataFolder() + File.separator + "gspawns.ser"));
+			oos.writeObject(game.getGspawns());
+			oos.close();
+		} catch (Exception e) {
+			log.warning("[" + plugin.getName() + "] Files could not be saved!");
+			e.printStackTrace();
+		}
 	}
 	
 }

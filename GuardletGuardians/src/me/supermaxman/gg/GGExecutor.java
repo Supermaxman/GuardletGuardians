@@ -4,7 +4,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 public class GGExecutor extends BaseExecutor {
-    @Override
+    @SuppressWarnings("deprecation")
+	@Override
     protected void run(Player player, String[] args) {
         if(player.isOp()){
         	if(args.length>=1) {
@@ -126,11 +127,18 @@ public class GGExecutor extends BaseExecutor {
         			}catch(Exception e) {
                     	player.sendMessage(ChatColor.RED+"[GG]: Command used incorrectly, please only set numbers for limits.");
         			}
+        		}else if(s.equalsIgnoreCase("guardian")&&(args.length>=2)) {
+        			try {
+            			GG.game.addGuardian(GG.plugin.getServer().getPlayer(args[1]));
+                    	player.sendMessage(ChatColor.AQUA+"[GG]: First Guardian changed this round to "+ ChatColor.GOLD+args[1]+ChatColor.AQUA+".");
+        			}catch(Exception e) {
+                    	player.sendMessage(ChatColor.RED+"[GG]: Could not find player.");
+        			}
         		}else {
-                	player.sendMessage(ChatColor.RED+"[GG]: Command used incorrectly, use /gg setlobby, runnerpoint, endgame, starttime [time], finishlaps [lap number], sugartimer [time], snowballtime [time], minplayers [limit], maxplayers [limit], finishid1 [block id], finishid2 [block id], guardianid [block id], .");
+                	player.sendMessage(ChatColor.RED+"[GG]: Command used incorrectly, use /gg setlobby, runnerpoint, endgame, starttime [time], finishlaps [lap number], sugartimer [time], snowballtime [time], minplayers [limit], maxplayers [limit], finishid1 [block id], finishid2 [block id], guardianid [block id], guardian [username]");
         		}
         	}else {
-            	player.sendMessage(ChatColor.RED+"[GG]: Command used incorrectly, use /gg setlobby,setgame,setapple,endgame,starttime [time],timelimit [time],appletimer [time], minplayers [limit],maxplayers [limit].");
+            	player.sendMessage(ChatColor.RED+"[GG]: Command used incorrectly, use /gg setlobby, runnerpoint, endgame, starttime [time], finishlaps [lap number], sugartimer [time], snowballtime [time], minplayers [limit], maxplayers [limit], finishid1 [block id], finishid2 [block id], guardianid [block id], guardian [username]");
         	}
         }else {
         	player.sendMessage(ChatColor.RED+"[GG]: You do not have permission to use this command.");
