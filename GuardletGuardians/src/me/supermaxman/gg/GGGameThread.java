@@ -15,7 +15,7 @@ public class GGGameThread extends Thread {
 private final GGGame game;
 private final GG plugin;
 public boolean end;
-
+public String tempg = "";
 public GGGameThread(GG pl, GGGame g){
     setName("GG-Thread-"+getId());
     game = g;
@@ -36,6 +36,9 @@ public GGGameThread(GG pl, GGGame g){
             this.wait(10*1000);
         	if(end)this.interrupt();
         }
+        tempg = game.chooseGuardian();
+        plugin.getServer().broadcastMessage(ChatColor.AQUA+"[GG]: " +ChatColor.RED+tempg+ChatColor.AQUA+" is the first Guardian! Start Purchasing Upgrades for this round!");
+        giveShop();
         plugin.getServer().broadcastMessage(ChatColor.AQUA+"[GG]: Game beginning in " +ChatColor.GOLD+start+ChatColor.AQUA+" seconds!");
      	start = start/2;
         this.wait(start*1000);
@@ -49,15 +52,12 @@ public GGGameThread(GG pl, GGGame g){
     	if(end)this.interrupt();
         plugin.getServer().broadcastMessage(ChatColor.AQUA+"[GG]: "+ChatColor.GOLD+"Game Start"+ChatColor.AQUA+"!");
         
-        game.addGuardian(game.chooseGuardian());
+        game.addGuardian(tempg);
         game.addRunners();
         startGame();
         plugin.getServer().broadcastMessage(ChatColor.AQUA+"[GG]: " +ChatColor.RED+game.getFirstGuardian()+ChatColor.AQUA+" is the first Guardian! Start running!");
     	if(end)this.interrupt();
-        game.setEnded(false);
-        equipRunners();
-        equipGuardian(game.getFirstGuardian());
-        
+        game.setEnded(false);        
         //start
         
      	while(!game.isEnded()) {
@@ -81,6 +81,7 @@ public GGGameThread(GG pl, GGGame g){
 		} catch (InterruptedException e) {
 			GG.log.warning("[" + plugin.getName() + "] Game interupted by server.");
 			GG.saveLocations();
+			GG.saveCoins();
 		}
     	
         this.interrupt();   
@@ -105,6 +106,7 @@ public GGGameThread(GG pl, GGGame g){
 		game.setEnded(true);
 		game.resetGspawns();
 		GG.saveLocations();
+		GG.saveCoins();
         for(Player p : plugin.getServer().getOnlinePlayers()) {
         	p.getInventory().clear();
         	ItemStack[] is = new ItemStack[4];
@@ -132,36 +134,22 @@ public GGGameThread(GG pl, GGGame g){
         plugin.getServer().broadcastMessage(ChatColor.AQUA+"[GG]: "+ChatColor.GOLD+p+ChatColor.AQUA+" finished first!");
         endGame();
 	}
-	@SuppressWarnings("deprecation")
-	synchronized void equipGuardian(String s) {
-		Player p = plugin.getServer().getPlayer(s);
-		ItemStack i = new ItemStack(Material.SNOW_BALL);
-		i.setAmount(64);
-		p.setItemInHand(i);
-		
-	}
 	
 	@SuppressWarnings("deprecation")
-	synchronized void equipRunners() {
-		for(String s : game.getPlayers()) {
-			Player p = GG.plugin.getServer().getPlayer(s);
-			
-			if(p!=null) {				
-				if(game.isRunner(p)){
-					ItemStack i = new ItemStack(Material.SUGAR);
-					ItemMeta m = i.getItemMeta();
-					m.setDisplayName(ChatColor.YELLOW + "" + ChatColor.BOLD + "Sprint");
-					ArrayList<String> l = new ArrayList<String>();
-					l.add(ChatColor.AQUA + "Right click to sprint");
-					l.add(ChatColor.AQUA +  "every 15 seconds");
-					m.setLore(l);
-					i.setItemMeta(m);
-					p.getInventory().addItem(i);
-				}
-				
+	synchronized void giveShop() {
+		for (String s : game.getPlayers()) {
+			Player p = GG.plugin.getServer().getPlayerExact(s);
+			if(p != null) {
+				ItemStack i = new ItemStack(Material.NETHER_STAR);
+				ItemMeta m = i.getItemMeta();
+				m.setDisplayName(ChatColor.DARK_PURPLE + "" + ChatColor.BOLD + "Shop");
+				ArrayList<String> l = new ArrayList<String>();
+				l.add(ChatColor.AQUA + "Right click to open Shop");
+				m.setLore(l);
+				i.setItemMeta(m);
+				p.getInventory().addItem(i);
 			}
 		}
 	}
-	
 	
 }

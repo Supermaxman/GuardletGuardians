@@ -134,11 +134,19 @@ public class GGExecutor extends BaseExecutor {
         			}catch(Exception e) {
                     	player.sendMessage(ChatColor.RED+"[GG]: Could not find player.");
         			}
+        		}else if(s.equalsIgnoreCase("addcoins")&&(args.length>=2)) {
+        			try {
+            			int t = Integer.parseInt(args[1]);
+            			GG.game.addPlayerCoins(player.getName(), t);
+                    	player.sendMessage(ChatColor.AQUA+"[GG]: "+ ChatColor.GOLD+t+ChatColor.AQUA+" coins added.");
+        			}catch(Exception e) {
+                    	player.sendMessage(ChatColor.RED+"[GG]: Command used incorrectly, please only set numbers for coins.");
+        			}
         		}else {
-                	player.sendMessage(ChatColor.RED+"[GG]: Command used incorrectly, use /gg setlobby, runnerpoint, endgame, starttime [time], finishlaps [lap number], sugartime [time], snowballtime [time], minplayers [limit], maxplayers [limit], finishid1 [block id], finishid2 [block id], guardianid [block id], guardian [username]");
+                	player.sendMessage(ChatColor.RED+"[GG]: Command used incorrectly, use /gg setlobby, runnerpoint, endgame, starttime [time], finishlaps [lap number], sugartime [time], snowballtime [time], minplayers [limit], maxplayers [limit], finishid1 [block id], finishid2 [block id], guardianid [block id], guardian [username], addcoins [number]");
         		}
         	}else {
-            	player.sendMessage(ChatColor.RED+"[GG]: Command used incorrectly, use /gg setlobby, runnerpoint, endgame, starttime [time], finishlaps [lap number], sugartime [time], snowballtime [time], minplayers [limit], maxplayers [limit], finishid1 [block id], finishid2 [block id], guardianid [block id], guardian [username]");
+            	player.sendMessage(ChatColor.RED+"[GG]: Command used incorrectly, use /gg setlobby, runnerpoint, endgame, starttime [time], finishlaps [lap number], sugartime [time], snowballtime [time], minplayers [limit], maxplayers [limit], finishid1 [block id], finishid2 [block id], guardianid [block id], guardian [username], addcoins [number]");
         	}
         }else {
         	player.sendMessage(ChatColor.RED+"[GG]: You do not have permission to use this command.");

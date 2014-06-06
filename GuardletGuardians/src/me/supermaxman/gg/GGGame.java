@@ -4,8 +4,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 public class GGGame{
 	
@@ -28,6 +32,9 @@ public class GGGame{
     private int sugarTime;
     private int snowballTime;
     private int maxHits;
+    private int lapcoins;
+    private int hitcoins;
+    private int killcoins;
     private boolean ended;
     private GGGameThread thread;
     private ArrayList<String> players = new ArrayList<String>();
@@ -38,7 +45,12 @@ public class GGGame{
 	private HashMap<String, Long> cooldowns = new HashMap<String, Long>();
 	private HashMap<String, Integer> gspawns = new HashMap<String, Integer>();
 	
-    public GGGame(int min, int max, int x, int y, int z, int start, int laps, int x2, int y2, int z2, int id1, int id2, int id3, int stime, int btime, int maxhits) {
+	private HashMap<String, ArrayList<ItemStack>> ritems = new HashMap<String, ArrayList<ItemStack>>();
+	private HashMap<String, ArrayList<ItemStack>> gitems = new HashMap<String, ArrayList<ItemStack>>();
+	
+	private HashMap<String, Integer> coins = new HashMap<String, Integer>();
+	
+    public GGGame(int min, int max, int x, int y, int z, int start, int laps, int x2, int y2, int z2, int id1, int id2, int id3, int stime, int btime, int maxhits, int lapcoins, int hitcoins, int killcoins) {
     	setMinPlayers(min);
         setMaxPlayers(max);
         setLobyLocationX(x);
@@ -55,6 +67,9 @@ public class GGGame{
         setSugarTime(stime);
         setSnowballTime(btime);
         setMaxHits(maxhits);
+        setLapcoins(lapcoins);
+        setHitcoins(hitcoins);
+        setKillcoins(killcoins);
         setRunners(new HashMap<String, Integer>());
         runnerhits = new HashMap<String, Integer>();
         setGuardians(new HashMap<String, Integer>());
@@ -65,26 +80,114 @@ public class GGGame{
         thread.start();
     }
     
-    public String getFirstGuardian() {
+    public void givePurchases(Player p) {
+    	for(ItemStack i :  givePurchases(p.getName())) {
+    		p.getInventory().addItem(i);
+    	}
+    }
+    public ArrayList<ItemStack> givePurchases(String s) {
+    	if(isRunner(s)) {
+    		if(!ritems.containsKey(s)) {
+    			ritems.put(s, new ArrayList<ItemStack>());
+    		}
+    		return ritems.get(s);
+    	}else if(isGuardian(s)) {
+    		if(!gitems.containsKey(s)) {
+    			gitems.put(s, new ArrayList<ItemStack>());
+    		}
+    		return gitems.get(s);
+    	}else {
+    		return new ArrayList<ItemStack>();
+    	}
+    }
+    
+    public HashMap<String, Integer> getCoins() {
+		return coins;
+	}
+
+	public void setCoins(HashMap<String, Integer> coins) {
+		this.coins = coins;
+	}
+	
+    public Integer getPlayerCoins(String s) {
+		if(!coins.containsKey(s)) {
+			coins.put(s, 0);
+		}
+		return coins.get(s);
+	}
+    
+	public void setPlayerCoins(String s, Integer i) {
+		coins.put(s, i);
+	}
+	public void addPlayerCoins(String s, Integer i) {
+		if(coins.containsKey(s)) {
+			coins.put(s, coins.get(s)+i);
+		}else {
+			coins.put(s, i);
+		}
+	}
+	public void removePlayerCoins(String s, Integer i) {
+		coins.put(s, coins.get(s)-i);
+	}
+	public boolean hasEnoughCoins(String s, Integer i) {
+		if(coins.containsKey(s)) {
+			if(coins.get(s)>=i) {
+				return true;
+			}else {
+				return false;
+			}
+		}else {
+			return false;
+		}
+	}
+	
+	
+	public String getFirstGuardian() {
     	return (String) guardians.keySet().toArray()[0];
     }
     
     public void addGuardian(Player p) {
     	addGuardian(p.getName());
     }
-    public void addGuardian(String s) {
+    
+    @SuppressWarnings("deprecation")
+	public void addGuardian(String s) {
     	runners.remove(s);
     	runnerhits.remove(s);
     	cooldowns.remove(s);
     	guardians.put(s, 0);
+    	Player p = GG.plugin.getServer().getPlayerExact(s);
+    	if(p!=null) {
+        	p.getInventory().clear();
+    		ItemStack i = new ItemStack(Material.SNOW_BALL);
+    		i.setAmount(64);
+    		p.setItemInHand(i);
+        	givePurchases(p);
+    	}
     }
     
     public void addRunner(Player p) {
     	addRunner(p.getName());
+    	givePurchases(p);
     }
-    public void addRunner(String s) {
+    @SuppressWarnings("deprecation")
+	public void addRunner(String s) {
     	runners.put(s, 0);
     	runnerhits.put(s, 0);
+    	Player p = GG.plugin.getServer().getPlayerExact(s);
+    	if(p!=null) {
+        	p.getInventory().clear();
+			ItemStack i = new ItemStack(Material.SUGAR);
+			ItemMeta m = i.getItemMeta();
+			m.setDisplayName(ChatColor.YELLOW + "" + ChatColor.BOLD + "Sprint");
+			ArrayList<String> l = new ArrayList<String>();
+			l.add(ChatColor.AQUA + "Right click to sprint");
+			l.add(ChatColor.AQUA +  "every 15 seconds");
+			m.setLore(l);
+			i.setItemMeta(m);
+			p.getInventory().addItem(i);
+        	givePurchases(p);
+    	}
     }
     
 	public void addRunners() {
@@ -98,6 +201,35 @@ public class GGGame{
     
     public int getHits(Player p) {
     	return getHits(p.getName());
+    }
+    
+    
+    public void addGitem(String s, ItemStack i) {
+    	if(!gitems.containsKey(s)) {
+    		gitems.put(s, new ArrayList<ItemStack>());
+    	}
+    	gitems.get(s).add(i);
+    }
+    
+    public ArrayList<ItemStack> getGitem(String s) {
+    	if(!gitems.containsKey(s)) {
+    		gitems.put(s, new ArrayList<ItemStack>());
+    	}
+    	return gitems.get(s);
+    }
+    
+    public void addRitem(String s, ItemStack i) {
+    	if(!ritems.containsKey(s)) {
+    		ritems.put(s, new ArrayList<ItemStack>());
+    	}
+    	ritems.get(s).add(i);
+    }
+    
+    public ArrayList<ItemStack> getRitem(String s) {
+    	if(!ritems.containsKey(s)) {
+    		ritems.put(s, new ArrayList<ItemStack>());
+    	}
+    	return ritems.get(s);
     }
     
     public int getHits(String s) {
@@ -138,6 +270,7 @@ public class GGGame{
     }
     public void addLap(String s) {
     	runners.put(s, runners.get(s)+1);
+    	addPlayerCoins(s, getLapcoins());
     }
     
     public void addHit(Player p) {
@@ -146,6 +279,7 @@ public class GGGame{
     public void addHit(String s) {
     	if(isGuardian(s)) {
         	guardians.put(s, guardians.get(s)+1);
+        	addPlayerCoins(s, getHitcoins());
     	}else {
         	runnerhits.put(s, runnerhits.get(s)+1);
     	}
@@ -525,6 +659,46 @@ public class GGGame{
 
 	public void setMaxHits(int maxHits) {
 		this.maxHits = maxHits;
+	}
+
+	public HashMap<String, ArrayList<ItemStack>> getGitems() {
+		return gitems;
+	}
+
+	public void setGitems(HashMap<String, ArrayList<ItemStack>> gitems) {
+		this.gitems = gitems;
+	}
+
+	public HashMap<String, ArrayList<ItemStack>> getRitems() {
+		return ritems;
+	}
+
+	public void setRitems(HashMap<String, ArrayList<ItemStack>> ritems) {
+		this.ritems = ritems;
+	}
+
+	public int getLapcoins() {
+		return lapcoins;
+	}
+
+	public void setLapcoins(int lapcoins) {
+		this.lapcoins = lapcoins;
+	}
+
+	public int getHitcoins() {
+		return hitcoins;
+	}
+
+	public void setHitcoins(int hitcoins) {
+		this.hitcoins = hitcoins;
+	}
+
+	public int getKillcoins() {
+		return killcoins;
+	}
+
+	public void setKillcoins(int killcoins) {
+		this.killcoins = killcoins;
 	}
 
 

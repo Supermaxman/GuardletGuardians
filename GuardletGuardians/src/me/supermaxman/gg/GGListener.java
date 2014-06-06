@@ -6,8 +6,13 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Fireball;
+import org.bukkit.entity.LargeFireball;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.SmallFireball;
 import org.bukkit.entity.Snowball;
+import org.bukkit.entity.ThrownPotion;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
@@ -16,6 +21,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -25,8 +31,10 @@ import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.potion.PotionType;
 
 	
 public class GGListener implements Listener {
@@ -68,6 +76,9 @@ public class GGListener implements Listener {
 	public void onPlayerMove(PlayerMoveEvent e) {
 		//Stop Guardian movement
 		Player p = e.getPlayer();
+		if(p.hasPotionEffect(PotionEffectType.WEAKNESS)) {
+			p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 40, 1, true), false);
+		}
 		if(GG.game.isRunner(p)) {
 			Block b = p.getLocation().getBlock().getRelative(BlockFace.DOWN);
 			if(b.getTypeId()==GG.game.getFinishId1() && (GG.game.getLaps(p) % 2==0)) {
@@ -156,6 +167,58 @@ public class GGListener implements Listener {
 						p.launchProjectile(Snowball.class).setShooter(p);
 					}
 					e.setCancelled(true);
+				}else if(i.getType()==Material.NETHER_STAR) {
+					GG.menu.open(p);
+					e.getPlayer().sendMessage(ChatColor.AQUA+"[GG]: You have "+ChatColor.GOLD+GG.game.getPlayerCoins(p.getName()) + ChatColor.GOLD+" coins!");
+					e.setCancelled(true);
+				}else if(i.getType()==Material.TNT) {
+					p.launchProjectile(LargeFireball.class);
+					if(p.getItemInHand().getAmount()==1) {
+						p.setItemInHand(null);
+					}
+					p.getItemInHand().setAmount(p.getItemInHand().getAmount()-1);
+				}else if(i.getType()==Material.FIREBALL) {
+					p.launchProjectile(SmallFireball.class);
+					if(p.getItemInHand().getAmount()==1) {
+						p.setItemInHand(null);
+					}
+					p.getItemInHand().setAmount(p.getItemInHand().getAmount()-1);
+				}else if(i.getType()==Material.WEB) {
+					ThrownPotion pot = p.launchProjectile(ThrownPotion.class);
+					Potion pe = new Potion(PotionType.SLOWNESS, 1, true, false);
+					pot.setItem(pe.toItemStack(1));
+					pot.setVelocity(p.getLocation().getDirection().multiply(2));
+					if(p.getItemInHand().getAmount()==1) {
+						p.setItemInHand(null);
+					}
+					p.getItemInHand().setAmount(p.getItemInHand().getAmount()-1);
+				}else if(i.getType()==Material.CACTUS) {
+					ThrownPotion pot = p.launchProjectile(ThrownPotion.class);
+					Potion pe = new Potion(PotionType.WEAKNESS, 1, true, false);
+					pot.setItem(pe.toItemStack(1));
+					pot.setVelocity(p.getLocation().getDirection().multiply(2));
+					if(p.getItemInHand().getAmount()==1) {
+						p.setItemInHand(null);
+					}
+					p.getItemInHand().setAmount(p.getItemInHand().getAmount()-1);
+				}else if(i.getType()==Material.CLAY_BRICK) {
+					if(p.getItemInHand().getAmount()==1) {
+						p.setItemInHand(null);
+					}
+					p.getItemInHand().setAmount(p.getItemInHand().getAmount()-1);
+					p.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 40, 1, false), true);
+				}else if(i.getType()==Material.CLAY_BALL) {
+					if(p.getItemInHand().getAmount()==1) {
+						p.setItemInHand(null);
+					}
+					p.getItemInHand().setAmount(p.getItemInHand().getAmount()-1);
+					p.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 40, 1, false), true);
+				}else if(i.getType()==Material.SUGAR_CANE) {
+					if(p.getItemInHand().getAmount()==1) {
+						p.setItemInHand(null);
+					}
+					p.getItemInHand().setAmount(p.getItemInHand().getAmount()-1);
+					p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 40, 3, false), true);
 				}
 			}
 		}
@@ -173,7 +236,15 @@ public class GGListener implements Listener {
 			e.setFoodLevel(20);
 		}
 	}
-	
+	@EventHandler
+	public void onExplosion(EntityExplodeEvent e) {
+		if (e.getEntity() instanceof Fireball) {
+			e.setCancelled(true);
+			for (Entity entity : e.getEntity().getNearbyEntities(2, 2, 2)) {
+				entity.setVelocity(entity.getLocation().getDirection().multiply(-1));
+			}
+		}
+	}
 	@EventHandler
 	public void onPlayerquit(PlayerQuitEvent e) {
 		Player p = e.getPlayer();
@@ -213,22 +284,28 @@ public class GGListener implements Listener {
 	@SuppressWarnings("deprecation")
 	@EventHandler
 	public void onPlayerDamage(EntityDamageEvent e) {
+		e.setDamage(0);
 		if(e instanceof EntityDamageByEntityEvent) {
 			if(e.getEntity() instanceof Player && ((EntityDamageByEntityEvent) e).getDamager() instanceof Snowball) {
 				if(e.getCause().equals(DamageCause.PROJECTILE)) {
 					Player p = (Player) e.getEntity();
 					Snowball b = (Snowball) ((EntityDamageByEntityEvent) e).getDamager();
-					GG.game.addHit(p);
-					if(b.getShooter() !=null) {
-						if(b.getShooter() instanceof Player) {
-							Player d = (Player) b.getShooter();
-							GG.game.addHit(d);
-					        d.sendMessage(ChatColor.AQUA+"[GG]: You hit "+ChatColor.GOLD+p.getName()+ ChatColor.AQUA+"! He has "+ChatColor.GOLD+(GG.game.getMaxHits()-GG.game.getHits(p))+ ChatColor.AQUA+" more left until he is out!");
+					if(!p.hasPotionEffect(PotionEffectType.DAMAGE_RESISTANCE)) {
+						GG.game.addHit(p);
+						if(b.getShooter() !=null) {
+							if(b.getShooter() instanceof Player) {
+								Player d = (Player) b.getShooter();
+								GG.game.addHit(d);
+						        d.sendMessage(ChatColor.AQUA+"[GG]: You hit "+ChatColor.GOLD+p.getName()+ ChatColor.AQUA+"! He has "+ChatColor.GOLD+(GG.game.getMaxHits()-GG.game.getHits(p))+ ChatColor.AQUA+" more left until he is out!");
+						        if((GG.game.getMaxHits()-GG.game.getHits(p))==0) {
+						        	GG.game.addPlayerCoins(d.getName(), GG.game.getKillcoins());
+						        }
+							}
 						}
-					}
-					p.sendMessage(ChatColor.AQUA+"[GG]: You have been hit by the Guardians! "+ChatColor.GOLD+(GG.game.getMaxHits()-GG.game.getHits(p))+ ChatColor.AQUA+" more and you are out!");
-					if(GG.game.getHits(p) >= GG.game.getMaxHits()) {
-						GG.game.addGuardian(p);
+						p.sendMessage(ChatColor.AQUA+"[GG]: You have been hit by the Guardians! "+ChatColor.GOLD+(GG.game.getMaxHits()-GG.game.getHits(p))+ ChatColor.AQUA+" more and you are out!");
+						if(GG.game.getHits(p) >= GG.game.getMaxHits()) {
+							GG.game.addGuardian(p);
+						}
 					}
 				}else {
 					e.setCancelled(true);
