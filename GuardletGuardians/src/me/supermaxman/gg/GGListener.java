@@ -77,7 +77,12 @@ public class GGListener implements Listener {
 		//Stop Guardian movement
 		Player p = e.getPlayer();
 		if(p.hasPotionEffect(PotionEffectType.WEAKNESS)) {
-			p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 40, 1, true), false);
+			p.removePotionEffect(PotionEffectType.WEAKNESS);
+			p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 80, 1, true), true);
+		}
+		if(p.hasPotionEffect(PotionEffectType.NIGHT_VISION)) {
+			p.removePotionEffect(PotionEffectType.NIGHT_VISION);
+			p.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 40, 2, true), true);
 		}
 		if(GG.game.isRunner(p)) {
 			Block b = p.getLocation().getBlock().getRelative(BlockFace.DOWN);
@@ -185,7 +190,7 @@ public class GGListener implements Listener {
 					p.getItemInHand().setAmount(p.getItemInHand().getAmount()-1);
 				}else if(i.getType()==Material.WEB) {
 					ThrownPotion pot = p.launchProjectile(ThrownPotion.class);
-					Potion pe = new Potion(PotionType.SLOWNESS, 1, true, false);
+					Potion pe = new Potion(PotionType.NIGHT_VISION, 1, true, false);
 					pot.setItem(pe.toItemStack(1));
 					pot.setVelocity(p.getLocation().getDirection().multiply(2));
 					if(p.getItemInHand().getAmount()==1) {
