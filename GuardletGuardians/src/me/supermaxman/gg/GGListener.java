@@ -7,7 +7,6 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Fireball;
 import org.bukkit.entity.LargeFireball;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.SmallFireball;
@@ -24,6 +23,7 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.ItemSpawnEvent;
+import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -44,6 +44,19 @@ public class GGListener implements Listener {
 	public void onPlayerRespawn(PlayerRespawnEvent e) {
 		Player p = e.getPlayer();
 		e.setRespawnLocation(new Location(p.getWorld(), GG.game.getLobyLocationX(), GG.game.getLobyLocationY(), GG.game.getLobyLocationZ()));
+	}
+	@EventHandler
+	public void onProjectileHit(ProjectileHitEvent e) {
+		if(e instanceof SmallFireball) {
+			for (Entity entity : e.getEntity().getNearbyEntities(3, 3, 3)) {
+				if(entity instanceof Player) {
+					Player p = (Player) entity;
+					if(GG.game.isRunner(p)) {
+						entity.setFireTicks(40);
+					}
+				}
+			}
+		}
 	}
 	
 	@SuppressWarnings("deprecation")
@@ -177,13 +190,15 @@ public class GGListener implements Listener {
 					e.getPlayer().sendMessage(ChatColor.AQUA+"[GG]: You have "+ChatColor.GOLD+GG.game.getPlayerCoins(p.getName()) + ChatColor.GOLD+" coins!");
 					e.setCancelled(true);
 				}else if(i.getType()==Material.TNT) {
-					p.launchProjectile(LargeFireball.class);
+					p.launchProjectile(LargeFireball.class).setVelocity(p.getLocation().getDirection().multiply(2));
 					if(p.getItemInHand().getAmount()==1) {
 						p.setItemInHand(null);
 					}
 					p.getItemInHand().setAmount(p.getItemInHand().getAmount()-1);
 				}else if(i.getType()==Material.FIREBALL) {
-					p.launchProjectile(SmallFireball.class);
+					SmallFireball b = p.launchProjectile(SmallFireball.class);
+					b.setVelocity(p.getLocation().getDirection().multiply(2));
+					b.setIsIncendiary(false);
 					if(p.getItemInHand().getAmount()==1) {
 						p.setItemInHand(null);
 					}
@@ -243,10 +258,10 @@ public class GGListener implements Listener {
 	}
 	@EventHandler
 	public void onExplosion(EntityExplodeEvent e) {
-		if (e.getEntity() instanceof Fireball) {
+		if (e.getEntity() instanceof LargeFireball) {
 			e.setCancelled(true);
-			for (Entity entity : e.getEntity().getNearbyEntities(2, 2, 2)) {
-				entity.setVelocity(entity.getLocation().getDirection().multiply(-1));
+			for (Entity entity : e.getEntity().getNearbyEntities(3, 3, 3)) {
+				entity.setVelocity(entity.getLocation().getDirection().multiply(-1.5));
 			}
 		}
 	}
