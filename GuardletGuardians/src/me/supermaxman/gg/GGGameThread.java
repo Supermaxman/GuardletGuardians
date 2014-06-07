@@ -1,11 +1,13 @@
 package me.supermaxman.gg;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Zombie;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
@@ -73,6 +75,7 @@ public GGGameThread(GG pl, GGGame g){
         		winGame();
         		return;
             }
+            removeMinions();
      	}
      	
      	
@@ -103,6 +106,12 @@ public GGGameThread(GG pl, GGGame g){
         endGame();
 	}
 	synchronized void endGame() {
+		for(Zombie z : game.getMinions().keySet()) {
+			if(z!=null) {
+				z.remove();
+			}
+		}
+		game.setMinions(new HashMap<Zombie, Long>());
 		game.setEnded(true);
 		game.resetGspawns();
 		GG.saveLocations();
@@ -151,5 +160,16 @@ public GGGameThread(GG pl, GGGame g){
 			}
 		}
 	}
+	synchronized void removeMinions() {
+		for(Zombie z : game.getMinions().keySet()) {
+			if(game.getMinion(z)+10000 < System.currentTimeMillis()) {
+				if(z!=null) {
+					z.remove();
+				}
+				game.getMinions().remove(z);
+			}
+		}
+	}
+	
 	
 }

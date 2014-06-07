@@ -6,12 +6,15 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
+import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LargeFireball;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.SmallFireball;
 import org.bukkit.entity.Snowball;
 import org.bukkit.entity.ThrownPotion;
+import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
@@ -47,7 +50,9 @@ public class GGListener implements Listener {
 	}
 	@EventHandler
 	public void onProjectileHit(ProjectileHitEvent e) {
-		if(e instanceof SmallFireball) {
+		if(e.getEntity() instanceof SmallFireball) {
+			SmallFireball b = (SmallFireball) e.getEntity();
+			b.setIsIncendiary(false);
 			for (Entity entity : e.getEntity().getNearbyEntities(3, 3, 3)) {
 				if(entity instanceof Player) {
 					Player p = (Player) entity;
@@ -56,6 +61,10 @@ public class GGListener implements Listener {
 					}
 				}
 			}
+		}else if(e.getEntity() instanceof Arrow) {
+			Zombie z = (Zombie) e.getEntity().getWorld().spawnEntity(e.getEntity().getLocation(), EntityType.ZOMBIE);
+			z.setBaby(true);
+			GG.game.setMinion(z, System.currentTimeMillis());
 		}
 	}
 	
@@ -217,6 +226,13 @@ public class GGListener implements Listener {
 					Potion pe = new Potion(PotionType.WEAKNESS, 1, true, false);
 					pot.setItem(pe.toItemStack(1));
 					pot.setVelocity(p.getLocation().getDirection().multiply(2));
+					if(p.getItemInHand().getAmount()==1) {
+						p.setItemInHand(null);
+					}
+					p.getItemInHand().setAmount(p.getItemInHand().getAmount()-1);
+				}else if(i.getType()==Material.ARROW) {
+					Arrow arrow = p.launchProjectile(Arrow.class);
+					arrow.setVelocity(p.getLocation().getDirection().multiply(2));
 					if(p.getItemInHand().getAmount()==1) {
 						p.setItemInHand(null);
 					}

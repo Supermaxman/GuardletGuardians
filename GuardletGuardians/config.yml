@@ -27,6 +27,7 @@ settings:
     fireball: '10'
     slowball: '10'
     confuseball: '10'
+    minionball: '10'
     armor: '10'
     camouflage: '10'
     sprintboost: '10'

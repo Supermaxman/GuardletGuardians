@@ -8,6 +8,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Zombie;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -47,6 +48,8 @@ public class GGGame{
 	
 	private HashMap<String, ArrayList<ItemStack>> ritems = new HashMap<String, ArrayList<ItemStack>>();
 	private HashMap<String, ArrayList<ItemStack>> gitems = new HashMap<String, ArrayList<ItemStack>>();
+	
+	private HashMap<Zombie, Long> minions = new HashMap<Zombie, Long>();
 	
 	private HashMap<String, Integer> coins = new HashMap<String, Integer>();
 	
@@ -701,5 +704,19 @@ public class GGGame{
 		this.killcoins = killcoins;
 	}
 
+	public HashMap<Zombie, Long> getMinions() {
+		return minions;
+	}
 
+	public void setMinions(HashMap<Zombie, Long> minions) {
+		this.minions = minions;
+	}
+	
+	public Long getMinion(Zombie z) {
+		return minions.get(z);
+	}
+	
+	public void setMinion(Zombie z, Long l) {
+		minions.put(z, l);
+	}
 }
